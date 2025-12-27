@@ -23,18 +23,21 @@ const PROJECTS = [
   },
 ];
 
-const BrowserCard = ({ 
-  project, 
-  isLast 
-}: { 
-  project: typeof PROJECTS[0], 
-  isLast: boolean 
+const BrowserCard = ({
+  project,
+  isLast
+}: {
+  project: typeof PROJECTS[0],
+  isLast: boolean
 }) => {
   return (
-    <div 
-      className="flex-none aspect-video h-auto"
-      style={{ 
-        width: '70vw', 
+    <a
+      href={project.url}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="flex-none aspect-video h-auto block focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#1A1A1A]/30"
+      style={{
+        width: '70vw',
         minWidth: '70vw',
         marginRight: isLast ? 0 : '15vw' // Hardcoded logic to guarantee spacing
       }}
@@ -49,15 +52,10 @@ const BrowserCard = ({
             <div className="w-3 h-3 rounded-full bg-green-500"></div>
           </div>
           
-          {/* Visit Button */}
-          <a
-            href={project.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="ml-auto flex items-center gap-2 bg-[#1A1A1A] text-white px-4 py-1.5 rounded-md hover:bg-[#1A1A1A]/90 transition-colors font-['JetBrains_Mono',monospace] text-xs font-medium"
-          >
+          {/* Visit Indicator (whole card is clickable) */}
+          <span className="ml-auto flex items-center gap-2 bg-[#1A1A1A] text-white px-4 py-1.5 rounded-md hover:bg-[#1A1A1A]/90 transition-colors font-['JetBrains_Mono',monospace] text-xs font-medium">
             Visit <ExternalLink size={14} />
-          </a>
+          </span>
         </div>
 
         {/* Image Container */}
@@ -70,7 +68,7 @@ const BrowserCard = ({
           />
           
           {/* Darkening Layer for Text Contrast */}
-          <div className="absolute inset-0 bg-black/40" />
+          <div className="absolute inset-0 bg-black/40 pointer-events-none" />
           
           {/* Info Overlay - Bottom */}
           <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 to-transparent p-6 pt-16 pointer-events-none">
@@ -83,7 +81,7 @@ const BrowserCard = ({
           </div>
         </div>
       </div>
-    </div>
+    </a>
   );
 };
 
@@ -134,7 +132,12 @@ export const ProjectsShowcaseSection = () => {
       <div className="md:hidden py-8 space-y-12">
         {PROJECTS.map((project, index) => (
           <div key={index} className="w-full px-4">
-            <div className="bg-white rounded-xl shadow-2xl overflow-hidden border border-gray-200 aspect-video flex flex-col">
+            <a
+              href={project.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block bg-white rounded-xl shadow-2xl overflow-hidden border border-gray-200 aspect-video flex flex-col focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#1A1A1A]/30"
+            >
               {/* Browser Header */}
               <div className="bg-gray-100 px-4 py-3 flex items-center gap-2 border-b border-gray-200 flex-shrink-0">
                 <div className="flex gap-2">
@@ -143,14 +146,9 @@ export const ProjectsShowcaseSection = () => {
                   <div className="w-3 h-3 rounded-full bg-green-500"></div>
                 </div>
                 
-                <a
-                  href={project.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="ml-auto flex items-center gap-2 bg-[#1A1A1A] text-white px-3 py-1.5 rounded-md text-xs font-['JetBrains_Mono',monospace]"
-                >
+                <span className="ml-auto flex items-center gap-2 bg-[#1A1A1A] text-white px-3 py-1.5 rounded-md text-xs font-['JetBrains_Mono',monospace]">
                   Visit <ExternalLink size={12} />
-                </a>
+                </span>
               </div>
 
               {/* Content */}
@@ -160,7 +158,7 @@ export const ProjectsShowcaseSection = () => {
                   alt={project.title}
                   className="absolute inset-0 w-full h-full object-cover"
                 />
-                <div className="absolute inset-0 bg-black/40" />
+                <div className="absolute inset-0 bg-black/40 pointer-events-none" />
                 
                 <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 to-transparent p-6 pt-12 pointer-events-none">
                   <h3 className="text-2xl font-['Instrument_Serif',serif] font-bold text-white mb-2 drop-shadow-md">
@@ -171,7 +169,7 @@ export const ProjectsShowcaseSection = () => {
                   </p>
                 </div>
               </div>
-            </div>
+            </a>
           </div>
         ))}
       </div>
