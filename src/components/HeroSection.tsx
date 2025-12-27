@@ -93,7 +93,7 @@ export const HeroSection = () => {
       <div className="sticky top-0 h-screen w-full overflow-hidden flex flex-col items-center justify-center">
         
         {/* The Wall */}
-        <div className="relative w-full max-w-6xl aspect-video grid z-10" style={{ gridTemplateColumns: `repeat(${cols}, 1fr)` }}>
+        <div className="relative w-full max-w-6xl aspect-video grid z-0" style={{ gridTemplateColumns: `repeat(${cols}, 1fr)` }}>
           {bricks.map((_, i) => (
             <Brick key={i} index={i} total={bricks.length} scrollProgress={smoothProgress} />
           ))}
@@ -128,9 +128,10 @@ export const HeroSection = () => {
           </p>
         </motion.div>
 
+        {/* Scroll Indicator - High Z-Index with Contrast */}
         <motion.div 
             style={{ opacity: useTransform(smoothProgress, [0, 0.1], [1, 0]) }}
-            className="absolute bottom-10 left-1/2 -translate-x-1/2 text-[#1A1A1A]/50 animate-bounce font-['JetBrains_Mono',monospace] text-sm"
+            className="absolute bottom-10 left-1/2 -translate-x-1/2 z-50 text-[#1A1A1A] animate-bounce font-['JetBrains_Mono',monospace] text-sm backdrop-blur-sm bg-white/40 px-4 py-2 rounded-full shadow-lg"
         >
             ↓ Scroll to Break
         </motion.div>

@@ -44,52 +44,62 @@ export const VibeTrapSection = () => {
   const intersectionX = width * 0.78;
 
   return (
-    <div ref={containerRef} className="h-[400vh] relative bg-[#F9F9F7]">
-      <div className="sticky top-0 h-screen w-full flex flex-col items-center justify-center p-2 sm:p-4">
-        
-        {/* The Card - Maximized Height */}
-        <div className="bg-white w-full max-w-[95vw] xl:max-w-7xl h-[85vh] min-h-[600px] rounded-2xl shadow-xl relative flex flex-col p-6 md:p-10 overflow-hidden">
+    <>
+      {/* Text-Only Intro Section */}
+      <motion.div 
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        transition={{ duration: 0.8 }}
+        viewport={{ once: true }}
+        className="bg-[#F9F9F7] py-24 px-6 md:px-12 lg:px-24"
+      >
+        <div className="max-w-5xl mx-auto">
+          <h1 className="text-6xl md:text-7xl lg:text-8xl font-['Instrument_Serif',serif] text-[#1A1A1A] mb-8 leading-tight">
+            The Vibe Trap
+          </h1>
+          <p className="font-['JetBrains_Mono',monospace] text-base md:text-lg text-[#1A1A1A]/70 leading-relaxed max-w-3xl">
+            It starts with magic. You prompt, it builds. But as complexity grows, the context window suffocates. 
+            What begins as velocity turns into a cycle of debugging hallucinated logic. The marginal value plummets 
+            while the cost of correction skyrockets.
+          </p>
+        </div>
+      </motion.div>
+
+      {/* Sticky Chart Container */}
+      <div ref={containerRef} className="h-[400vh] relative bg-[#F9F9F7]">
+        <div className="sticky top-0 h-screen w-full flex flex-col items-center justify-center p-2 sm:p-4">
           
-          {/* Header (Top 10-15%) */}
-          <div className="flex justify-between items-start mb-6 shrink-0 z-20 relative">
-            <div>
-              <h2 className="text-3xl md:text-5xl font-['Instrument_Serif',serif] text-[#1A1A1A]">
-                The Vibe Trap
-              </h2>
-              <p className="font-['JetBrains_Mono',monospace] text-sm text-[#1A1A1A]/60 mt-2">
-                Diminishing Returns of AI Code Generation
-              </p>
-            </div>
+          {/* The Card - Maximized Height, Chart Only */}
+          <div className="bg-white w-full max-w-[95vw] xl:max-w-7xl h-[90vh] min-h-[700px] rounded-2xl shadow-xl relative flex flex-col p-6 md:p-8 overflow-hidden">
             
-            {/* Interactive Disclaimer */}
-            <div className="relative">
-                <button 
-                    className="p-2 hover:bg-gray-100 rounded-full transition-colors"
-                    onMouseEnter={() => setShowDisclaimer(true)}
-                    onMouseLeave={() => setShowDisclaimer(false)}
-                    onClick={() => setShowDisclaimer(!showDisclaimer)}
-                    aria-label="Disclaimer Info"
-                >
-                    <Info size={24} className="text-[#1A1A1A]/40" />
-                </button>
+            {/* Interactive Disclaimer - Repositioned to Top Right */}
+            <div className="absolute top-6 right-6 z-30">
+              <button 
+                className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                onMouseEnter={() => setShowDisclaimer(true)}
+                onMouseLeave={() => setShowDisclaimer(false)}
+                onClick={() => setShowDisclaimer(!showDisclaimer)}
+                aria-label="Disclaimer Info"
+              >
+                <Info size={24} className="text-[#1A1A1A]/40" />
+              </button>
 
-                <AnimatePresence>
-                    {showDisclaimer && (
-                        <motion.div 
-                            initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                            animate={{ opacity: 1, y: 0, scale: 1 }}
-                            exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                            className="absolute right-0 top-full mt-2 w-72 bg-white p-4 rounded-lg shadow-xl border border-gray-100 z-50 text-xs font-['JetBrains_Mono',monospace] text-[#1A1A1A]/80 leading-relaxed"
-                        >
-                            DISCLAIMER: For graphical storytelling and narrative only; not based on quantitative research.
-                        </motion.div>
-                    )}
-                </AnimatePresence>
+              <AnimatePresence>
+                {showDisclaimer && (
+                  <motion.div 
+                    initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                    className="absolute right-0 top-full mt-2 w-72 bg-white p-4 rounded-lg shadow-xl border border-gray-100 z-50 text-xs font-['JetBrains_Mono',monospace] text-[#1A1A1A]/80 leading-relaxed"
+                  >
+                    DISCLAIMER: For graphical storytelling and narrative only; not based on quantitative research.
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
-          </div>
 
-          {/* Chart Container (Remaining ~80%) */}
-          <div className="flex-1 w-full relative min-h-0">
+            {/* Chart Container - Full Height */}
+            <div className="flex-1 w-full h-full relative">
             <svg viewBox={`0 0 ${width} ${height}`} preserveAspectRatio="none" className="w-full h-full overflow-visible">
               
               {/* --- Background Areas & Axes (Layer 1) --- */}
@@ -197,6 +207,7 @@ export const VibeTrapSection = () => {
         </div>
 
       </div>
-    </div>
+      </div>
+    </>
   );
 };

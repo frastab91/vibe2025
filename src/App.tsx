@@ -1,6 +1,7 @@
 import { FontLoader } from "./components/FontLoader";
 import { HeroSection } from "./components/HeroSection";
 import { PersonalExperienceSection } from "./components/PersonalExperienceSection";
+import { GlitchDivider } from "./components/GlitchDivider";
 import { VibeTrapSection } from "./components/VibeTrapSection";
 import { WorkflowSection } from "./components/WorkflowSection";
 import { LessonsLearnedSection } from "./components/LessonsLearnedSection";
@@ -16,6 +17,7 @@ export default function App() {
       <MobileDisclaimerModal />
       <HeroSection />
       <PersonalExperienceSection />
+      <GlitchDivider />
       <VibeTrapSection />
       <LessonsLearnedSection />
       <WorkflowSection />
