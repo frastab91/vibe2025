@@ -7,6 +7,7 @@ import { WorkflowSection } from "./components/WorkflowSection";
 import { LessonsLearnedSection } from "./components/LessonsLearnedSection";
 import { MobileDisclaimerModal } from "./components/MobileDisclaimerModal";
 import { TopNavigation } from "./components/TopNavigation";
+import { ProjectsShowcaseSection } from "./components/ProjectsShowcaseSection";
 import { OutroSection } from "./components/OutroSection";
 
 export default function App() {
@@ -21,6 +22,7 @@ export default function App() {
       <VibeTrapSection />
       <LessonsLearnedSection />
       <WorkflowSection />
+      <ProjectsShowcaseSection />
       <OutroSection />
     </div>
   );

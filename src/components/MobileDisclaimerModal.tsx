@@ -1,68 +1,82 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { X } from "lucide-react";
 
 export const MobileDisclaimerModal = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
-    // Check if mobile on mount
-    const checkMobile = () => {
-      if (window.innerWidth < 768) {
-        // Optional: Check session storage if we only want to show it once per session
-        // For now, we'll show it once per page load to ensure the joke lands
+    // Small delay to ensure DOM is ready
+    const timer = setTimeout(() => {
+      // Check if we're on mobile and if user hasn't seen this warning yet
+      const hasSeenWarning = sessionStorage.getItem("hasSeenMobileWarning");
+      const isMobile = window.innerWidth < 768;
+
+      console.log("Mobile check:", { isMobile, hasSeenWarning, width: window.innerWidth });
+
+      if (isMobile && !hasSeenWarning) {
         setIsOpen(true);
       }
-    };
+    }, 100);
 
-    checkMobile();
+    return () => clearTimeout(timer);
   }, []);
+
+  const handleDismiss = () => {
+    sessionStorage.setItem("hasSeenMobileWarning", "true");
+    setIsOpen(false);
+  };
 
   return (
     <AnimatePresence>
       {isOpen && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/40 backdrop-blur-sm md:hidden"
-        >
+        <>
+          {/* Backdrop */}
           <motion.div
-            initial={{ scale: 0.9, opacity: 0, y: 20 }}
-            animate={{ scale: 1, opacity: 1, y: 0 }}
-            exit={{ scale: 0.9, opacity: 0, y: 20 }}
-            className="bg-[#F9F9F7] w-full max-w-sm p-6 rounded-2xl shadow-2xl border border-[#A3332D]/20 relative overflow-hidden"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/20 backdrop-blur-sm z-[100]"
+            onClick={handleDismiss}
+          />
+
+          {/* Modal Card - Slides up from bottom */}
+          <motion.div
+            initial={{ y: "100vh" }}
+            animate={{ y: 0 }}
+            exit={{ y: "100vh" }}
+            transition={{
+              type: "spring",
+              damping: 25,
+              stiffness: 300,
+            }}
+            className="fixed bottom-0 left-0 right-0 z-[101] p-4 pointer-events-none"
           >
-            {/* Decorative background vibe */}
-            <div className="absolute -top-10 -right-10 w-32 h-32 bg-[#A3332D]/5 rounded-full blur-3xl"></div>
-            <div className="absolute -bottom-10 -left-10 w-32 h-32 bg-[#2D5A27]/5 rounded-full blur-3xl"></div>
+            <div 
+              className="bg-white border border-gray-200 rounded-lg shadow-2xl p-8 max-w-lg mx-auto pointer-events-auto"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Headline */}
+              <h2 className="text-3xl font-bold font-['Instrument_Serif',serif] text-[#1A1A1A] mb-4">
+                Desktop Privilege.
+              </h2>
 
-            <div className="relative z-10">
-              <div className="flex justify-between items-start mb-4">
-                <h3 className="font-['Instrument_Serif',serif] text-2xl font-bold text-[#1A1A1A]">
-                  Desktop Only-ish?
-                </h3>
-                <button 
-                  onClick={() => setIsOpen(false)}
-                  className="p-1 rounded-full hover:bg-black/5 transition-colors"
-                >
-                  <X size={20} className="text-[#1A1A1A]/60" />
-                </button>
-              </div>
-
-              <p className="font-['JetBrains_Mono',monospace] text-sm text-[#4A4A4A] leading-relaxed mb-6">
-                Sorry, I didn't vibe-code to optimize this for mobile screens. Hope you understand! :)
+              {/* Body Text */}
+              <p className="text-sm text-gray-600 mb-6 leading-relaxed">
+                This experience was vibe-coded for the expansive luxury of a monitor, 
+                not a vertical thumb-scrolling workout. Things might look cramped, 
+                clipped, or chaotically artistic on this device.
               </p>
 
+              {/* Proceed Button */}
               <button
-                onClick={() => setIsOpen(false)}
-                className="w-full py-3 bg-[#1A1A1A] text-[#F9F9F7] font-['JetBrains_Mono',monospace] text-sm font-bold rounded-lg hover:bg-[#2D5A27] transition-colors"
+                onClick={handleDismiss}
+                className="w-full bg-[#1A1A1A] text-white font-['JetBrains_Mono',monospace] py-3 px-6 rounded-md hover:bg-[#1A1A1A]/90 active:bg-[#1A1A1A]/80 transition-colors duration-200 text-sm font-medium"
               >
-                I understand (I think)
+                I'll risk the aesthetic.
               </button>
             </div>
           </motion.div>
-        </motion.div>
+        </>
       )}
     </AnimatePresence>
   );
