@@ -23,54 +23,43 @@ const PROJECTS = [
   },
 ];
 
-const BrowserCard = ({
-  project,
-  isLast
-}: {
-  project: typeof PROJECTS[0],
-  isLast: boolean
-}) => {
+const BrowserCard = ({ project }: { project: typeof PROJECTS[0] }) => {
   return (
     <a
       href={project.url}
       target="_blank"
       rel="noopener noreferrer"
-      className="flex-none aspect-video h-auto block focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#1A1A1A]/30"
-      style={{
-        width: '70vw',
-        minWidth: '70vw',
-        marginRight: isLast ? 0 : '15vw' // Hardcoded logic to guarantee spacing
-      }}
+      // Added 'shrink-0' to prevent squashing
+      // 'card-sizing' (defined in <style>) handles the width
+      className="card-sizing shrink-0 aspect-video block relative group rounded-xl focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#1A1A1A]/30"
     >
-      <div className="w-full h-full bg-white rounded-xl shadow-2xl overflow-hidden border border-gray-200 flex flex-col">
+      <div className="w-full h-full bg-white rounded-xl shadow-2xl overflow-hidden border border-gray-200 flex flex-col transition-transform duration-300 group-hover:shadow-[0_20px_50px_rgba(0,0,0,0.15)]">
         {/* Browser Header */}
         <div className="bg-gray-100 px-4 py-3 flex items-center gap-2 border-b border-gray-200 flex-shrink-0">
-          {/* Window Controls */}
           <div className="flex gap-2">
             <div className="w-3 h-3 rounded-full bg-red-500"></div>
             <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
             <div className="w-3 h-3 rounded-full bg-green-500"></div>
           </div>
           
-          {/* Visit Indicator (whole card is clickable) */}
-          <span className="ml-auto flex items-center gap-2 bg-[#1A1A1A] text-white px-4 py-1.5 rounded-md hover:bg-[#1A1A1A]/90 transition-colors font-['JetBrains_Mono',monospace] text-xs font-medium">
+          {/* Visit Indicator */}
+          <span className="ml-auto flex items-center gap-2 bg-[#1A1A1A] text-white px-4 py-1.5 rounded-md transition-all duration-300 group-hover:bg-black group-hover:scale-105 font-['JetBrains_Mono',monospace] text-xs font-medium">
             Visit <ExternalLink size={14} />
           </span>
         </div>
 
         {/* Image Container */}
         <div className="flex-1 relative bg-gray-50 overflow-hidden min-h-0">
-          {/* The Image */}
           <img
             src={project.image}
             alt={project.title}
-            className="absolute inset-0 w-full h-full object-cover"
+            className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
           />
           
-          {/* Darkening Layer for Text Contrast */}
-          <div className="absolute inset-0 bg-black/40 pointer-events-none" />
+          {/* Dark Overlay */}
+          <div className="absolute inset-0 bg-black/40 pointer-events-none transition-opacity duration-300 group-hover:bg-black/30" />
           
-          {/* Info Overlay - Bottom */}
+          {/* Text Content */}
           <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 to-transparent p-6 pt-16 pointer-events-none">
             <h3 className="text-2xl md:text-4xl font-['Instrument_Serif',serif] font-bold text-white mb-3 drop-shadow-md">
               {project.title}
@@ -92,14 +81,31 @@ export const ProjectsShowcaseSection = () => {
     offset: ["start start", "end end"],
   });
 
-  // Transform vertical scroll to horizontal movement
-  // Moving left by 85% ensures we scroll past the first two cards and gaps to see the third one.
-  const x = useTransform(scrollYProgress, [0, 1], ["0%", "-85%"]); 
+  // -60% scroll usually aligns the last card well for a 3-card set
+  const x = useTransform(scrollYProgress, [0, 1], ["0%", "-60%"]); 
 
   return (
     <div className="bg-[#F9F9F7]">
-      {/* Header Section - Normal Flow */}
-      <div className="py-24 px-6 md:px-12 text-center">
+
+      {/* CSS Injection for robust card sizing */}
+      <style>{`
+        .card-sizing {
+          width: 85vw;
+          margin-right: 8vw;
+        }
+        @media (min-width: 768px) {
+          .card-sizing {
+            width: 70vw;
+            margin-right: 15vw;
+          }
+        }
+        .card-sizing:last-child {
+          margin-right: 0;
+        }
+      `}</style>
+
+      {/* Intro Text */}
+      <div className="pt-24 pb-24 px-6 md:px-12 text-center">
         <h2 className="text-5xl md:text-7xl font-['Instrument_Serif',serif] font-bold text-[#1A1A1A] mb-8">
           The Ones That Survived
         </h2>
@@ -108,73 +114,32 @@ export const ProjectsShowcaseSection = () => {
         </p>
       </div>
 
-      {/* Desktop: Horizontal Scroll Section */}
-      <div className="hidden md:block">
-        <div ref={containerRef} className="h-[300vh] relative">
-          <div className="sticky top-0 h-screen flex items-center overflow-hidden">
-            <motion.div
-              style={{ x, paddingLeft: '15vw' }} // Padding to center the first card initially
-              className="flex w-max"
-            >
-              {PROJECTS.map((project, index) => (
-                <BrowserCard 
-                  key={index} 
-                  project={project} 
-                  isLast={index === PROJECTS.length - 1} 
-                />
-              ))}
-            </motion.div>
-          </div>
+      {/* Scroll Container */}
+      <div ref={containerRef} className="h-[300vh] relative">
+        
+        {/* Sticky Wrapper 
+            - sticky top-0: Stays in viewport
+            - h-screen: Fills the screen height
+            - flex flex-col justify-center: Vertically centers the content
+            - py-[12vh]: CRITICAL FIX. Adds 12vh padding to top/bottom to force cards away from edges.
+            - bg-[#F9F9F7] + z-20: Ensures this layer covers the intro text below it.
+        */}
+        <div className="sticky top-0 h-screen flex flex-col justify-center py-[12vh] overflow-hidden bg-[#F9F9F7] z-20">
+          
+          <motion.div
+            style={{ x }}
+            // Center the starting position
+            className="flex flex-nowrap w-max px-[7.5vw] md:px-[15vw]"
+          >
+            {PROJECTS.map((project, index) => (
+              <BrowserCard key={index} project={project} />
+            ))}
+          </motion.div>
+
         </div>
       </div>
 
-      {/* Mobile: Vertical Stack */}
-      <div className="md:hidden py-8 space-y-12">
-        {PROJECTS.map((project, index) => (
-          <div key={index} className="w-full px-4">
-            <a
-              href={project.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="block bg-white rounded-xl shadow-2xl overflow-hidden border border-gray-200 aspect-video flex flex-col focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#1A1A1A]/30"
-            >
-              {/* Browser Header */}
-              <div className="bg-gray-100 px-4 py-3 flex items-center gap-2 border-b border-gray-200 flex-shrink-0">
-                <div className="flex gap-2">
-                  <div className="w-3 h-3 rounded-full bg-red-500"></div>
-                  <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
-                  <div className="w-3 h-3 rounded-full bg-green-500"></div>
-                </div>
-                
-                <span className="ml-auto flex items-center gap-2 bg-[#1A1A1A] text-white px-3 py-1.5 rounded-md text-xs font-['JetBrains_Mono',monospace]">
-                  Visit <ExternalLink size={12} />
-                </span>
-              </div>
-
-              {/* Content */}
-              <div className="flex-1 relative bg-gray-50 overflow-hidden">
-                <img
-                  src={project.image}
-                  alt={project.title}
-                  className="absolute inset-0 w-full h-full object-cover"
-                />
-                <div className="absolute inset-0 bg-black/40 pointer-events-none" />
-                
-                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 to-transparent p-6 pt-12 pointer-events-none">
-                  <h3 className="text-2xl font-['Instrument_Serif',serif] font-bold text-white mb-2 drop-shadow-md">
-                    {project.title}
-                  </h3>
-                  <p className="text-xs font-['JetBrains_Mono',monospace] text-white/90 drop-shadow-md">
-                    {project.description}
-                  </p>
-                </div>
-              </div>
-            </a>
-          </div>
-        ))}
-      </div>
-
-      {/* Bottom Padding */}
+      {/* Footer Padding */}
       <div className="h-24 md:h-32"></div>
     </div>
   );
